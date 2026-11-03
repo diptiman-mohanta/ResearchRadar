@@ -217,7 +217,6 @@ Many fields have no open review source yet. Speech venues such as Interspeech an
 - **Quality has not been measured.** It has had a few real runs by its maintainers, on Windows with Python 3.10. There is no benchmark and no independent evaluation yet.
 - **Coverage is uneven.** It is strongest in machine learning, and the review data is not a random sample. NeurIPS published reviews of accepted papers only, and rejected papers are nearly all from ICLR.
 - **Reviews stop at 2020 without the dataset,** and at mid-2025 with it. Newer work comes from paper searches, and much of that is preprints.
-- **Withdrawn papers are labelled `rejected`** in the script's `outcome` field. Check the `decision` field to tell them apart.
 - **The search covers titles, abstracts and keywords,** not the text of the reviews, so it can miss reviews of related papers.
 - **"Open" means "not found".** Someone may already be working on it under different wording.
 - **An AI is doing the reading.** Check the quotes that matter, and have someone who knows the field look at a statement before you commit to it.

@@ -132,6 +132,25 @@ class TestVerify:
         assert not radar.quote_in_source("baseline, weak", "baseline weak")
 
 
+class TestOutcome:
+    @pytest.mark.parametrize(
+        ("accepted", "decision", "expected"),
+        [
+            (True, "ICLR 2025 Poster", "accepted"),
+            (False, "ICLR 2025 Rejected", "rejected"),
+            (False, "ICLR 2021 Reject", "rejected"),
+            (False, "NeurIPS 2024 Rejected", "rejected"),
+            (False, "ICLR 2025 Withdrawn", "withdrawn"),
+            (False, "ICLR 2024 Desk Rejected", "desk_rejected"),
+            (False, "Submitted to ICLR 2017", "unclear"),
+            (False, "ICLR 2017 Invite to Workshop", "unclear"),
+            (False, None, "unclear"),
+        ],
+    )
+    def test_labels(self, accepted, decision, expected):
+        assert radar.paper_outcome(accepted, decision) == expected
+
+
 class TestReviewText:
     def test_content_forms(self):
         assert "useful" in radar.review_text(
@@ -169,6 +188,7 @@ class TestIndex:
                         {"invitations": ["V/Submission1/-/Decision"], "content": {"decision": {"value": "Reject"}}},
                     ]}},
                 },
+                {"id": "W1", "title": "Graph neural withdrawn", "abstract": "Abs", "keywords": [], "accepted": False, "venueid": "ICLR 2024 Withdrawn", "conference": "iclr2024", "raw": {"details": {"directReplies": [{"invitations": ["V/Official_Review"], "content": {"review": "A review of a paper that its authors withdrew."}}]}}},
                 {"id": "R2", "title": "Topographic neural rejected", "abstract": "Abs", "keywords": [], "accepted": False, "venueid": "ICLR 2024 Rejected", "conference": "iclr2024", "raw": {"details": {"directReplies": [{"invitations": ["V/Official_Review"], "content": {"review": "This also has a long enough review text."}}]}}},
             ),
         )  # fmt: skip
@@ -189,6 +209,18 @@ class TestIndex:
         rejected = next(p for p in out["papers"] if p["outcome"] == "rejected")
         assert "does not explain" in rejected["reviews"] and rejected["venue"] == "ICLR 2024"
         assert rejected["url"] == "https://openreview.net/forum?id=R1"
+
+    def test_withdrawn_is_not_counted_as_rejected(self, index, capsys):
+        out = self._search(capsys, "graph neural", "--outcome", "rejected")
+        assert [p["title"] for p in out["papers"]] == ["Graph neural rejected"]
+
+    def test_withdrawn_can_be_requested_and_is_labelled(self, index, capsys):
+        out = self._search(capsys, "graph neural", "--outcome", "withdrawn")
+        assert [(p["title"], p["outcome"]) for p in out["papers"]] == [("Graph neural withdrawn", "withdrawn")]
+
+    def test_all_returns_every_outcome_with_its_label(self, index, capsys):
+        out = self._search(capsys, "graph neural", "--outcome", "all")
+        assert sorted(p["outcome"] for p in out["papers"]) == ["accepted", "rejected", "withdrawn"]
 
     def test_outcome_filter(self, index, capsys):
         out = self._search(capsys, "graph neural", "--outcome", "rejected")

@@ -28,7 +28,8 @@ Things to know:
 - **Rejected papers in SNOR** are mostly in `failed_matches.jsonl`, not `normalized_papers.jsonl`, with their reviews embedded in `raw.details.directReplies`. Using only the main files would remove most rejected papers from the comparison.
 - **eLife letters** contain names of editors in their standard text. Ignore these.
 - **Newer eLife papers** use a reviewed-preprint model and may have no decision letter.
-- **SNOR's rejected papers are mostly ICLR:** about 21,700 ICLR against about 670 NeurIPS. Compare accepted and rejected on ICLR. ICLR 2018 and NeurIPS 2025 are not in it, although its description lists them.
+- **SNOR's rejected papers are mostly ICLR:** about 16,300 ICLR against about 670 NeurIPS. Compare accepted and rejected on ICLR.
+- **Not accepted does not mean rejected.** SNOR also holds about 5,900 withdrawn papers, 167 desk-rejected papers, and 291 from ICLR 2017 whose result is unclear. `--outcome both` returns accepted and rejected only. Ask for `withdrawn`, `desk_rejected`, `unclear` or `all` separately. ICLR 2018 and NeurIPS 2025 are not in it, although its description lists them.
 - **These are not random samples.** NeurIPS shows only winners. Say so when it matters.
 
 ## OpenReview live

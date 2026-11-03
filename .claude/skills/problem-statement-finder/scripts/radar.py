@@ -527,6 +527,31 @@ def _build(args: argparse.Namespace) -> None:
     emit({"mode": mode, "papers": kept + extra_papers, "comments": stored + extra_reviews, "path": str(snor_db()), "license": "CC BY 4.0", "source": SNOR_RECORD})
 
 
+OUTCOME_GROUPS = {
+    "accepted": ["accepted"],
+    "rejected": ["rejected"],
+    "withdrawn": ["withdrawn"],
+    "desk_rejected": ["desk_rejected"],
+    "unclear": ["unclear"],
+    "both": ["accepted", "rejected"],
+    "all": ["accepted", "rejected", "withdrawn", "desk_rejected", "unclear"],
+}
+
+
+def paper_outcome(accepted: Any, decision: str | None) -> str:
+    """The real outcome. Not accepted does not mean rejected: authors withdraw thousands of papers themselves."""
+    if accepted:
+        return "accepted"
+    text = (decision or "").casefold()
+    if "withdraw" in text:
+        return "withdrawn"
+    if "desk" in text:
+        return "desk_rejected"
+    if "reject" in text:
+        return "rejected"
+    return "unclear"  # for example "Submitted to ICLR 2017", which does not state a result
+
+
 def cmd_iclr(args: argparse.Namespace) -> None:
     path = snor_db()
     if not path.is_file():
@@ -538,11 +563,10 @@ def cmd_iclr(args: argparse.Namespace) -> None:
         return
     conn = sqlite3.connect(path)
     conn.row_factory = sqlite3.Row
-    outcomes = {"accepted": [1], "rejected": [0], "both": [1, 0]}[args.outcome]
     results: list[dict[str, Any]] = []
-    for accepted in outcomes:
+    for outcome in OUTCOME_GROUPS[args.outcome]:
         clauses = ["accepted = ?", "EXISTS (SELECT 1 FROM reviews r WHERE r.paper_id = papers.id AND r.is_review)"]
-        values: list[Any] = [accepted]
+        values: list[Any] = [outcome == "accepted"]
         alternatives = []
         for query in args.query:
             words = query.split()
@@ -561,6 +585,8 @@ def cmd_iclr(args: argparse.Namespace) -> None:
             # LIKE is only a fast first pass: it matches inside words, so check whole words here.
             if taken >= args.limit:
                 break
+            if paper_outcome(row["accepted"], row["decision"]) != outcome:
+                continue
             if not matches(f"{row['title']} {row['abstract'] or ''} {row['keywords']}", args.query):
                 continue
             taken += 1
@@ -568,7 +594,7 @@ def cmd_iclr(args: argparse.Namespace) -> None:
             results.append(
                 {
                     "title": row["title"], "venue": f"{(row['conference'] or '').upper()} {row['year']}", "year": row["year"],
-                    "outcome": "accepted" if row["accepted"] else "rejected", "decision": row["decision"], "review_score_avg": row["score"],
+                    "outcome": outcome, "decision": row["decision"], "review_score_avg": row["score"],
                     "url": f"https://openreview.net/forum?id={row['id']}", "abstract": (row["abstract"] or "")[:600],
                     "reviews": "\n---\n".join(reviews)[: args.max_chars],
                 }
@@ -577,7 +603,7 @@ def cmd_iclr(args: argparse.Namespace) -> None:
         {
             "source": "SNOR v1 (Zenodo), CC BY 4.0", "dataset": SNOR_RECORD, "snapshot": "July 2025; ICLR 2017 and 2019-2025, NeurIPS 2021-2024", "index_mode": mode,
             "warning": "SAMPLE index: fragments only. Do not draw conclusions from it." if mode == "sample" else None,
-            "note": "Readable reviews are not a random sample. Rejected NeurIPS papers are few (under 5% of NeurIPS records), so compare outcomes mainly on ICLR.", "count": len(results), "papers": results,
+            "note": "Readable reviews are not a random sample. Rejected NeurIPS papers are few (about 5% of NeurIPS records), so compare outcomes mainly on ICLR. --outcome both means accepted and rejected; withdrawn papers are a different outcome, so they are left out unless requested.", "count": len(results), "papers": results,
         }
     )  # fmt: skip
 
@@ -683,7 +709,7 @@ def main(argv: list[str] | None = None) -> None:
 
     iclr = sub.add_parser("iclr")
     iclr.add_argument("query", nargs="+", help="Each quoted query is an alternative; its words must all appear in title, abstract or keywords.")
-    iclr.add_argument("--outcome", choices=["accepted", "rejected", "both"], default="both")
+    iclr.add_argument("--outcome", choices=sorted(OUTCOME_GROUPS), default="both", help="both means accepted and rejected. all adds withdrawn, desk_rejected and unclear.")
     iclr.add_argument("--conference", choices=["iclr", "neurips"])
     iclr.add_argument("--since", type=int)
     iclr.add_argument("--limit", type=int, default=10, help="Per outcome.")

@@ -25,6 +25,8 @@ Split each review into separate items first, and tag each one:
 
 Only possible with the ICLR index. If it is not built, say this lens was not run.
 
+Compare accepted with rejected, as `--outcome both` does. Authors withdraw papers for many reasons, so analyse withdrawn papers separately, if at all.
+
 - **Tolerated flaws.** A weakness raised against accepted papers too. The field lives with it, so it may be hard rather than careless. Often the most interesting signal.
 - **Fatal flaws.** Raised mainly against rejected papers. May show a standard the field enforces, which is less often a research gap.
 - **Good ideas, rejected.** Reviewers liked the idea and rejected the execution. Someone may do it properly.
