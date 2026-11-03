@@ -1,8 +1,21 @@
-# ResearchRadar
+# ResearchRadar – AI Research Assistant for Research Gap Discovery
 
-**Enter a research topic. Get problem statements backed by real peer reviews.**
+**ResearchRadar is an open-source AI research assistant that helps researchers discover research gaps, analyse academic peer reviews, generate evidence-backed research problem statements, and evaluate the novelty of research ideas.**
 
-Most AI research ideas are plausible guesses. ResearchRadar reads what reviewers actually wrote about accepted and rejected papers, finds what keeps coming up across different papers, tries to kill each idea, and shows you the evidence, including what it killed and what it could not check.
+Built using portable AI agent skills for Claude Code and other Agent Skills-compatible assistants, ResearchRadar combines academic literature search, peer-review intelligence, research limitation analysis, and adversarial novelty auditing into one research workflow.
+
+Instead of generating research ideas from generic AI knowledge, ResearchRadar investigates what researchers have published, what reviewers have criticised, which limitations recur across independent papers, and whether proposed research directions have already been explored.
+
+### What can ResearchRadar do?
+
+- **AI Literature Review:** Discover and organise relevant academic papers.
+- **Peer Review Analysis:** Extract reviewer criticisms, questions, strengths, and rebuttal evidence.
+- **Research Gap Discovery:** Identify recurring limitations across independent research papers.
+- **Research Problem Generation:** Develop testable research questions and hypotheses.
+- **Research Novelty Checking:** Find the closest prior work and challenge novelty claims.
+- **Research Intelligence:** Produce evidence-backed research reports with traceable sources and explicit uncertainty.
+
+ResearchRadar is designed for PhD students, academic researchers, research engineers, and scientists looking for more rigorous ways to identify and validate research opportunities.
 
 If this is useful to you, please [give it a star](https://github.com/diptiman-mohanta/ResearchRadar) ⭐ so that other researchers can find it.
 
