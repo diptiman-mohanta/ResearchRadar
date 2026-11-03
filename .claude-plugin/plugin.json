@@ -1,0 +1,14 @@
+{
+  "name": "researchradar",
+  "version": "0.2.0",
+  "description": "Enter a research topic, get solid problem statements backed by real peer reviews of accepted and rejected papers.",
+  "author": {
+    "name": "Diptiman Mohanta",
+    "url": "https://github.com/diptiman-mohanta"
+  },
+  "homepage": "https://github.com/diptiman-mohanta/ResearchRadar",
+  "repository": "https://github.com/diptiman-mohanta/ResearchRadar",
+  "license": "MIT",
+  "keywords": ["research", "research-gap", "problem-statement", "peer-review", "literature-review", "thesis", "phd", "academic"],
+  "skills": ["./.claude/skills/"]
+}

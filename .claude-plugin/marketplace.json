@@ -1,0 +1,20 @@
+{
+  "name": "researchradar",
+  "owner": {
+    "name": "Diptiman Mohanta",
+    "url": "https://github.com/diptiman-mohanta"
+  },
+  "metadata": {
+    "description": "Research problem statements from real peer reviews."
+  },
+  "plugins": [
+    {
+      "name": "researchradar",
+      "description": "Enter a research topic, get solid problem statements backed by real peer reviews of accepted and rejected papers.",
+      "version": "0.2.0",
+      "source": "./",
+      "category": "research",
+      "homepage": "https://github.com/diptiman-mohanta/ResearchRadar"
+    }
+  ]
+}
